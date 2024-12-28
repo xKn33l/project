@@ -17,7 +17,7 @@ app.prepare().then(() => {
   server.use(express.urlencoded({ extended: true }));
 
   server.get("/", (req, res) => {
-    res.send("...");
+    res.send("/public/index.js");
   });
 
   server.get("/api", (req, res) => {
