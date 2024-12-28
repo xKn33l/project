@@ -1,16 +1,38 @@
-const { sequelize } = require('sequelize');
-const dotenv = require('dotenv');
+const sqlite3 = require('sqlite3').verbose();
 
-dotenv.config();
-
-const sequelize = new Sequelize(process.env.DB_NAME, process.env.DB_USER, process.env.DB_PASSWORD, {
-    host: process.env.DB_HOST,
-    dialect: 'postgres',
+// Connect to SQLite 
+const db = new sqlite3.Database('./touristsync.db', (err) => {
+  if (err) {
+    console.error('Error connecting to database:', err.message);
+  } else {
+    console.log('Connected to the SQLite database.');
+  }
 });
 
-// We test the connection
-sequelize.authenticate()
-    .then(() => console.log('Database connected!'))
-    .catch((err) => console.log('Error: ' + err));
+// Create a "users" table
+db.serialize(() => {
+  db.run(`
+    CREATE TABLE IF NOT EXISTS users (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      name TEXT NOT NULL,
+      email TEXT UNIQUE NOT NULL,
+      password TEXT NOT NULL,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    );
+  `, (err) => {
+    if (err) {
+      console.error('Error creating table:', err.message);
+    } else {
+      console.log('Users table created (if it didn\'t exist).');
+    }
+  });
+});
 
-MediaSourceHandle.exports = sequelize;
+// Closing the database connection
+db.close((err) => {
+  if (err) {
+    console.error('Error closing database:', err.message);
+  } else {
+    console.log('Database connection closed.');
+  }
+});

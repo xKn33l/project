@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/xKn33l/project#readme",
   "dependencies": {
-    "pg": "^8.13.1"
+    "pg": "^8.13.1",
+    "sqlite3": "^5.1.7"
   }
 }
