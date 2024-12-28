@@ -3,8 +3,10 @@ const userModel = require('../models/userModel');
 
 const router = express.Router();
 
+console.log('Initializing user routes...');
+  
 // Let's register a user 
-router.post('/register', (req, res) => {
+router.get('/register', (req, res) => {
     const { name, email, password } = req.body; 
 
     if (!name || !email || !password ) {
@@ -20,7 +22,7 @@ router.post('/register', (req, res) => {
 });
 
 // Login now 
-router.post('/login', (req, res) => {
+router.get('/login', (req, res) => {
     const { email, password } = req.body;
 
     if (!email || !password) {
@@ -37,6 +39,13 @@ router.post('/login', (req, res) => {
 
         res.json({ message: 'Login successful!', user });
     });
+});
+
+router.get('/tasks', (req, res) => {
+    const { task, due_date } = req.body;
+    if (!task || !due_date ) {
+        return res.status(400).json({ error: 'Task and Date required.'});
+    }
 });
 
 module.exports = router; 

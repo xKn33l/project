@@ -28,6 +28,32 @@ db.serialize(() => {
   });
 });
 
+db.serialize(() => {
+  db.run(`CREATE TABLE IF NOT EXISTS tasks (
+    task_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    taskname TEXT NOT NULL,
+    task_date DATETIME DEFAULT CURRENT_TIMESTAMP
+    );`
+  );
+});
+
+db.serialize(() => {
+  db.run(`CREATE TABLE IF NOT EXISTS expenses (
+    expense_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    expense_name TEXT NOT NULL,
+    expense_desc TEXT NOT NULL
+    );`
+  );
+});
+
+db.serialize(() => {
+  db.run(`CREATE TABLE IF NOT EXISTS preferences (
+    location TEXT NOT NULL
+    );`
+  );
+});
+
+
 // Closing the database connection
 db.close((err) => {
   if (err) {
