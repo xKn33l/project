@@ -2,7 +2,7 @@ const sqlite3 = require('sqlite3').verbose();
 const bcrypt = require('bcrypt');
 
 // Starting a db connection 
-const db = new sqlite3.Database('../touristsync.db');
+const db = new sqlite3.Database('./touristsync.db');
 
 // Now we register a new user 
 exports.registerUser = (name, email, password, callback) => {
