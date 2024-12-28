@@ -16,5 +16,8 @@
   "bugs": {
     "url": "https://github.com/xKn33l/project/issues"
   },
-  "homepage": "https://github.com/xKn33l/project#readme"
+  "homepage": "https://github.com/xKn33l/project#readme",
+  "dependencies": {
+    "pg": "^8.13.1"
+  }
 }
