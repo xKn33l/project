@@ -1,32 +1,40 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const userRoutes = require('./backend/routes/userRoutes');
+const next = require("next");
 
+const dev = process.env.NODE_ENV !== "production";
+const app = next({ dev });
+const handle = app.getRequestHandler();
 
-const app = express();
+const server = express();
 const PORT = 3000;
 
-// Middleware for parsing JSON requests
-app.use(express.json()); // Built-in middleware to parse JSON in Express
+// Prepare Next.js
+app.prepare().then(() => {
+  // Your existing Express routes
+  server.use(express.json());
+  server.use(express.urlencoded({ extended: true }));
 
+  server.get("/", (req, res) => {
+    res.send("...");
+  });
 
-// Routes
-app.get('/', (req, res) => {
-  res.send('Welcome to the Tourist System API!');
-}); 
+  server.get("/api", (req, res) => {
+    res.send("Hello from Express API");
+  });
 
-console.log('Loading user routes...');
-app.use('/users', userRoutes);
-console.log('User routes loaded.');
+  // Handle all Next.js routes
+  server.all("*", (req, res) => {
+    return handle(req, res);
+  });
 
-app.use((req, res) => {
-  res.status(404).json({ error: `Cannot ${req.method} ${req.url}` });
-}); 
-
-
-
-
-// Starting the server
-app.listen(PORT, () => {
-  console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+// Start the server
+server.listen(3000, (err) => {
+  if (err) throw err;
+  console.log("> Ready on http://localhost:3000");
+});
+
+
