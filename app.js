@@ -17,7 +17,7 @@ app.prepare().then(() => {
   server.use(express.urlencoded({ extended: true }));
 
   server.get("/", (req, res) => {
-    res.send("/public/index.js");
+    app.render(req, res, "/"); // Render the Next.js index page
   });
 
   server.get("/api", (req, res) => {
