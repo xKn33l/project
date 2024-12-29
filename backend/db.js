@@ -1,7 +1,7 @@
 const sqlite3 = require('sqlite3').verbose();
 
-// Connect to SQLite 
-const db = new sqlite3.Database('./touristsync.db', (err) => {
+// Connect to SQLite database
+const db = new sqlite3.Database('touristsync.db', (err) => {
   if (err) {
     console.error('Error connecting to database:', err.message);
   } else {
@@ -9,10 +9,10 @@ const db = new sqlite3.Database('./touristsync.db', (err) => {
   }
 });
 
-// Create a "users" table
+// Create the necessary tables if they don't exist
 db.serialize(() => {
   db.run(`
-    CREATE TABLE IF NOT EXISTS users (
+    CREATE TABLE IF NOT EXISTS Users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       name TEXT NOT NULL,
       email TEXT UNIQUE NOT NULL,
@@ -21,44 +21,28 @@ db.serialize(() => {
     );
   `, (err) => {
     if (err) {
-      console.error('Error creating table:', err.message);
+      console.error('Error creating users table:', err.message);
     } else {
       console.log('Users table created (if it didn\'t exist).');
     }
   });
-});
 
-db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS tasks (
+  db.run(`CREATE TABLE IF NOT EXISTS Tasks (
     task_id INTEGER PRIMARY KEY AUTOINCREMENT,
     taskname TEXT NOT NULL,
     task_date DATETIME DEFAULT CURRENT_TIMESTAMP
-    );`
-  );
-});
+  );`);
 
-db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS expenses (
+  db.run(`CREATE TABLE IF NOT EXISTS Expenses (
     expense_id INTEGER PRIMARY KEY AUTOINCREMENT,
     expense_name TEXT NOT NULL,
     expense_desc TEXT NOT NULL
-    );`
-  );
-});
+  );`);
 
-db.serialize(() => {
-  db.run(`CREATE TABLE IF NOT EXISTS preferences (
+  db.run(`CREATE TABLE IF NOT EXISTS Preferences (
     location TEXT NOT NULL
-    );`
-  );
+  );`);
 });
 
-
-// Closing the database connection
-db.close((err) => {
-  if (err) {
-    console.error('Error closing database:', err.message);
-  } else {
-    console.log('Database connection closed.');
-  }
-});
+// Export the db connection for use in other files
+module.exports = db;
