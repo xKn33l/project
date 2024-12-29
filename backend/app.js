@@ -2,6 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const sqlite3 = require('sqlite3').verbose();
+const apiKey = process.env.WEATHER_API;
 require('dotenv').config();
 
 const app = express();
@@ -22,16 +23,15 @@ db.serialize(() => {
 
 // Weather API route
 app.post('/api/weather', async (req, res) => {
-  const { city } = req.body;
+  const { lat, lon } = req.body;
 
-  if (!city) {
-    return res.status(400).json({ error: 'City name is required' });
+  if (!lat || !lon) {
+    return res.status(400).json({ error: 'Latitude and longitude are required' });
   }
 
   try {
-    const apiKey = process.env.WEATHER_API;
     const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`
+      `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&appid=${apiKey}`
     );
 
     if (!response.ok) {
@@ -39,13 +39,7 @@ app.post('/api/weather', async (req, res) => {
     }
 
     const data = await response.json();
-    const weatherData = {
-      name: data.name,
-      temperature: data.main.temp,
-      lat: data.coord.lat,
-      lon: data.coord.lon,
-    };
-    res.json(weatherData);
+    res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Internal Server Error' });
   }

@@ -1,25 +1,34 @@
-import fetch from 'node-fetch';
-
 export async function POST(req) {
-  const { city } = await req.json();
-
-  if (!city) {
-    return new Response(JSON.stringify({ error: 'City name is required' }), { status: 400 });
-  }
-
-  try {
-    const apiKey = process.env.WEATHER_API; // Ensure you have the weather API key in your .env file
-    const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${apiKey}`
-    );
-
-    if (!response.ok) {
-      return new Response(JSON.stringify({ error: 'Error fetching weather data' }), { status: response.status });
+    const { city } = await req.json();
+  
+    const apiKey = process.env.NEXT_PUBLIC_API_KEY; // Access your API key from .env
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+  
+    try {
+      const response = await fetch(url); // Use native fetch (no need for 'node-fetch')
+  
+      if (response.ok) {
+        const data = await response.json();
+        return new Response(
+          JSON.stringify({
+            name: data.name,
+            temp: data.main.temp,
+            condition: data.weather[0].main,
+            coord: data.coord
+          }),
+          { status: 200 }
+        );
+      } else {
+        return new Response(
+          JSON.stringify({ message: "City not found" }),
+          { status: 404 }
+        );
+      }
+    } catch (error) {
+      return new Response(
+        JSON.stringify({ message: "Error fetching weather data" }),
+        { status: 500 }
+      );
     }
-
-    const data = await response.json();
-    return new Response(JSON.stringify(data));
-  } catch (error) {
-    return new Response(JSON.stringify({ error: 'Internal Server Error' }), { status: 500 });
   }
-}
+  
